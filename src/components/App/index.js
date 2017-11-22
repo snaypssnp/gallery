@@ -1,14 +1,22 @@
 import template from './index.html';
+import Base from '../Base';
+import Gallery from '../Gallery';
 
-class App {
-  constructor(el) {
-    this.el = el;
+class App extends Base {
+  constructor({el}) {
+    super({el});
     
-    this.render();
+    this._initComponents();
   }
 
   render() {
     this.el.innerHTML = template;
+  }
+
+  _initComponents() {
+    new Gallery({
+      el: this.el.querySelector('.js-app')
+    });
   }
 }
 
