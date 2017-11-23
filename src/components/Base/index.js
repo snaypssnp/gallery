@@ -9,7 +9,7 @@ class Base {
     this.render();
   }
 
-  render() {
+  render = () => {
     throw new Error('Method must be implemented');
   }
 

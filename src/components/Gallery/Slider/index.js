@@ -18,7 +18,7 @@ class Slider extends Base {
     `;
   }
 
-  _createImage({preview, resource}) {
+  _createImage = ({preview, resource}) => {
     return `
       <div class="showcase__slide showcase__slide_image">
         <img

@@ -3,8 +3,8 @@ import Base from '../Base';
 import Gallery from '../Gallery';
 
 class App extends Base {
-  constructor({ el }) {
-    super({ el });
+  constructor({el}) {
+    super({el});
     
     this._initComponents();
   }
@@ -14,8 +14,8 @@ class App extends Base {
   }
 
   _initComponents() {
-    new Gallery({
-      el: this.el.querySelector('.js-app')
+    this.gallery = new Gallery({
+      el: this.el.querySelector('.js-app'),
     });
   }
 }

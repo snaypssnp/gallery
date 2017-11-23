@@ -1,7 +1,7 @@
 import Base from '../Base';
 import Slider from './Slider';
 import Photo from './Photo';
-import photos from '../../data/photos';
+import photos from '../../data/photos.json';
 
 class Gallery extends Base {
   constructor({el}) {
@@ -28,7 +28,7 @@ class Gallery extends Base {
     this.photo = new Photo({
       el: document.createElement('div'),
       resource,
-      title
+      title,
     });
 
     this.slider = new Slider({
@@ -42,15 +42,19 @@ class Gallery extends Base {
     );
   }
 
+  _selectPhoto = (event) => {
+    const {target} = event;
+    const {resource} = target.dataset;
+
+    if (!resource) {
+      return;
+    }
+
+    this.photo.update(resource);
+  }
+
   _initEvents() {
-    this.slider.on('click', (event) => {
-      const {target} = event;
-      const {resource, title} = target.dataset;
-
-      this.photo.update(resource);
-
-      console.log('CLICK IMAGE = ', resource, title);
-    })
+    this.slider.on('click', this._selectPhoto);
   }
 }
 
