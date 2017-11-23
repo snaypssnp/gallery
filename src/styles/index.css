@@ -5,12 +5,18 @@ body {
   font-family: "Helvetica Neue",Arial,sans-serif;
   color: #222;
 }
+
+.showcase {
+  margin: 10px;
+
+}
 .showcase__wrapper {
   position: relative;
 }
 
 .showcase__viewport {
   z-index: 1;
+  border: 1px solid #ccc;
 }
 
 .showcase__viewport {
@@ -43,6 +49,8 @@ body {
   -ms-user-select: none;
   user-select: none;
   cursor: default;
+  width: 560px;
+  margin: 0 auto;
 }
 
 .showcase__item-image {
@@ -70,6 +78,14 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.showcase__panner img {
+  display: inline;
+  position: absolute;
+  left: 0;
+  top: 0;
+  /*width: 1200px;*/
 }
 
 .showcase__item {

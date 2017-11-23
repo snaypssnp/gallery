@@ -1,11 +1,14 @@
 import Base from '../../Base';
 
 class Slider extends Base {
-  constructor({el, items}) {
-    super({el, items});
+  constructor({el, photos}) {
+    super({el, photos});
+
+    this.render();
   }
+
   render() {
-    const listHTML = this.items.map(this._createImage).join('');
+    const listHTML = this.photos.map(this._createImage).join('');
 
     this.el.innerHTML = `
       <div class="showcase__slider">
@@ -18,12 +21,13 @@ class Slider extends Base {
     `;
   }
 
-  _createImage = ({preview, resource}) => {
+  _createImage = ({preview, resource, zoom}) => {
     return `
       <div class="showcase__slide showcase__slide_image">
         <img
           class="showcase__slide-image"
-          data-resource="${resource}" 
+          data-resource="${resource}"
+          data-zoom="${zoom}"
           src="${preview}" />
       </div>
     `;

@@ -5,12 +5,6 @@ class Base {
     if (!(this.el instanceof Element)) {
       throw new Error('Argument "el" must belong to the class "Element"');
     }
-
-    this.render();
-  }
-
-  render = () => {
-    throw new Error('Method must be implemented');
   }
 
   on(eventType, fn) {

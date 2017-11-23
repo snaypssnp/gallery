@@ -6,6 +6,5 @@ module.exports = {
     'no-underscore-dangle': 0,
     'arrow-body-style': 0,
     'no-trailing-spaces': 0,
-    'no-new': 0,
   }
 };

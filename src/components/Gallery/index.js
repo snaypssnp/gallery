@@ -7,6 +7,8 @@ class Gallery extends Base {
   constructor({el}) {
     super({el});
 
+    this.render();
+
     this._initComponents();
 
     this._initEvents();
@@ -23,17 +25,18 @@ class Gallery extends Base {
   }
 
   _initComponents() {
-    const [{resource, title}] = photos;
+    const [{resource, title, zoom}] = photos;
 
     this.photo = new Photo({
       el: document.createElement('div'),
       resource,
+      zoom,
       title,
     });
 
     this.slider = new Slider({
       el: document.createElement('div'),
-      items: photos,
+      photos,
     });
 
     this.wrapperEl.append(
@@ -50,7 +53,7 @@ class Gallery extends Base {
       return;
     }
 
-    this.photo.update(resource);
+    this.photo.update(target.dataset);
   }
 
   _initEvents() {
