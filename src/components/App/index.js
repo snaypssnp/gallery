@@ -3,8 +3,8 @@ import Base from '../Base';
 import Gallery from '../Gallery';
 
 class App extends Base {
-  constructor({el}) {
-    super({el});
+  constructor({ el }) {
+    super({ el });
     
     this._initComponents();
   }
