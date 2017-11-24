@@ -45,19 +45,18 @@ class Gallery extends Base {
     );
   }
 
-  _selectPhoto = (event) => {
-    const {target} = event;
-    const {resource} = target.dataset;
+  _initEvents() {
+    this.slider.on('click', this._onClick);
+  }
 
-    if (!resource) {
+  _onClick = (event) => {
+    const {target} = event;
+
+    if (!this.slider.isImage(target)) {
       return;
     }
 
     this.photo.update(target.dataset);
-  }
-
-  _initEvents() {
-    this.slider.on('click', this._selectPhoto);
   }
 }
 

@@ -5,11 +5,6 @@ body {
   font-family: "Helvetica Neue",Arial,sans-serif;
   color: #222;
 }
-
-.showcase {
-  margin: 10px;
-
-}
 .showcase__wrapper {
   position: relative;
 }
@@ -50,7 +45,7 @@ body {
   user-select: none;
   cursor: default;
   width: 560px;
-  margin: 0 auto;
+  margin: 10px auto;
 }
 
 .showcase__item-image {
@@ -111,7 +106,7 @@ img {
 }
 
 .showcase__slide {
-  border-top: 3px solid transparent;
+
   cursor: pointer;
   float: left;
   height: 66px;
@@ -121,4 +116,12 @@ img {
   position: relative;
   width: 46px;
   text-align: center;
+}
+
+.showcase__slide-image{
+  border-top: 3px solid transparent;
+}
+
+.showcase__slide_active {
+  border-top-color: #000;
 }

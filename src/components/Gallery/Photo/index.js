@@ -8,7 +8,7 @@ class Photo extends Base {
 
     this._initEvents();
   }
-
+  
   render() {
     const {resource, zoom} = this;
 
@@ -32,21 +32,22 @@ class Photo extends Base {
   }
 
   _initEvents() {
-    this.on('mouseenter', this._showZoom);
-    this.on('mouseleave', this._hideZoom);
-    this.on('mousemove', this._moveZoom);
+    this.on('mouseenter', this._onMouseEnter);
+    this.on('mouseleave', this._onMouseLeave);
+    this.on('mousemove', this._onMouseMove);
   }
 
-  _showZoom = () => {
+  _onMouseEnter = () => {
     this.pannerEl.style.opacity = 1;
+    this.rec = this.el.getBoundingClientRect();
   }
 
-  _hideZoom = () => {
+  _onMouseLeave = () => {
     this.pannerEl.style.opacity = 0;
   }
 
-  _moveZoom = (event) => {
-    const {x, y, width} = this.el.getBoundingClientRect();
+  _onMouseMove = (event) => {
+    const {x, y, width} = this.rec;
     const minLeft = width - this.zoomEl.offsetWidth;
     const top = y - event.pageY;
     const left = Math.max(x - event.pageX, minLeft);

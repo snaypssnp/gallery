@@ -218,25 +218,29 @@ var Photo = function (_Base) {
 
     var _this = _possibleConstructorReturn(this, (Photo.__proto__ || Object.getPrototypeOf(Photo)).call(this, { el: el, resource: resource, zoom: zoom }));
 
-    _this._showZoom = function () {
+    _this._onMouseEnter = function () {
       _this.pannerEl.style.opacity = 1;
+      _this.rec = _this.el.getBoundingClientRect();
     };
 
-    _this._hideZoom = function () {
+    _this._onMouseLeave = function () {
       _this.pannerEl.style.opacity = 0;
     };
 
-    _this._moveZoom = function (event) {
-      var _this$el$getBoundingC = _this.el.getBoundingClientRect(),
-          x = _this$el$getBoundingC.x,
-          y = _this$el$getBoundingC.y,
-          width = _this$el$getBoundingC.width;
+    _this._onMouseMove = function (event) {
+      var _this$rec = _this.rec,
+          x = _this$rec.x,
+          y = _this$rec.y,
+          width = _this$rec.width;
 
       var minLeft = width - _this.zoomEl.offsetWidth;
-      var top = y - event.pageY + 'px';
-      var left = Math.max(x - event.pageX, minLeft) + 'px';
+      var top = y - event.pageY;
+      var left = Math.max(x - event.pageX, minLeft);
 
-      Object.assign(_this.zoomEl.style, { top: top, left: left });
+      Object.assign(_this.zoomEl.style, {
+        top: top + 'px',
+        left: left + 'px'
+      });
     };
 
     _this.render();
@@ -263,17 +267,16 @@ var Photo = function (_Base) {
       var resource = _ref2.resource,
           zoom = _ref2.zoom;
 
-      this.resource = resource;
-      this.zoom = zoom;
+      Object.assign(this, { resource: resource, zoom: zoom });
 
       this.render();
     }
   }, {
     key: '_initEvents',
     value: function _initEvents() {
-      this.on('mouseenter', this._showZoom);
-      this.on('mouseleave', this._hideZoom);
-      this.on('mousemove', this._moveZoom);
+      this.on('mouseenter', this._onMouseEnter);
+      this.on('mouseleave', this._onMouseLeave);
+      this.on('mousemove', this._onMouseMove);
     }
   }]);
 
@@ -289,6 +292,8 @@ var Photo = function (_Base) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Base__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -309,15 +314,11 @@ var Slider = function (_Base) {
 
     var _this = _possibleConstructorReturn(this, (Slider.__proto__ || Object.getPrototypeOf(Slider)).call(this, { el: el, photos: photos }));
 
-    _this._createImage = function (_ref2) {
-      var preview = _ref2.preview,
-          resource = _ref2.resource,
-          zoom = _ref2.zoom;
-
-      return '\n      <div class="showcase__slide showcase__slide_image">\n        <img\n          class="showcase__slide-image"\n          data-resource="' + resource + '"\n          data-zoom="' + zoom + '"\n          src="' + preview + '" />\n      </div>\n    ';
-    };
+    _initialiseProps.call(_this);
 
     _this.render();
+
+    _this._initEvents();
     return _this;
   }
 
@@ -326,12 +327,61 @@ var Slider = function (_Base) {
     value: function render() {
       var listHTML = this.photos.map(this._createImage).join('');
 
-      this.el.innerHTML = '\n      <div class="showcase__slider">\n        <div class="showcase__slider-wrapper">\n          <div class="showcase__slider-viewport">\n            ' + listHTML + '\n          </div>\n        </div>\n      </div>\n    ';
+      this.el.innerHTML = '\n      <div class="showcase__slider ">\n        <div class="showcase__slider-wrapper">\n          <div class="showcase__slider-viewport">\n            ' + listHTML + '\n          </div>\n        </div>\n      </div>\n    ';
+
+      this.listImageEls = this.el.querySelectorAll('img');
+
+      this._addActiveClass(this.listImageEls[0]);
+    }
+  }, {
+    key: '_initEvents',
+    value: function _initEvents() {
+      this.on('click', this._onClick);
     }
   }]);
 
   return Slider;
 }(__WEBPACK_IMPORTED_MODULE_0__Base__["a" /* default */]);
+
+var _initialiseProps = function _initialiseProps() {
+  var _this2 = this;
+
+  this.activeClass = 'showcase__slide_active';
+
+  this.isImage = function (el) {
+    return el.classList.contains('showcase__slide-image');
+  };
+
+  this._createImage = function (_ref2) {
+    var preview = _ref2.preview,
+        resource = _ref2.resource,
+        zoom = _ref2.zoom;
+
+    return '\n      <div class="showcase__slide showcase__slide_image">\n        <img\n          class="showcase__slide-image"\n          data-resource="' + resource + '"\n          data-zoom="' + zoom + '"\n          src="' + preview + '" />\n      </div>\n    ';
+  };
+
+  this._onClick = function (event) {
+    [].concat(_toConsumableArray(_this2.listImageEls)).forEach(_this2._removeActiveClass);
+
+    _this2._addActiveClass(event.target);
+  };
+
+  this._addActiveClass = function (el) {
+    if (!_this2.isImage(el)) {
+      return;
+    }
+
+    el.classList.add(_this2.activeClass);
+  };
+
+  this._removeActiveClass = function (el) {
+    if (!_this2.isImage(el)) {
+      return;
+    }
+
+    el.classList.remove(_this2.activeClass);
+  };
+};
 
 /* harmony default export */ __webpack_exports__["a"] = Slider;
 
@@ -370,12 +420,11 @@ var Gallery = function (_Base) {
 
     var _this = _possibleConstructorReturn(this, (Gallery.__proto__ || Object.getPrototypeOf(Gallery)).call(this, { el: el }));
 
-    _this._selectPhoto = function (event) {
+    _this._onClick = function (event) {
       var target = event.target;
-      var resource = target.dataset.resource;
 
 
-      if (!resource) {
+      if (!_this.slider.isImage(target)) {
         return;
       }
 
@@ -423,7 +472,7 @@ var Gallery = function (_Base) {
   }, {
     key: '_initEvents',
     value: function _initEvents() {
-      this.slider.on('click', this._selectPhoto);
+      this.slider.on('click', this._onClick);
     }
   }]);
 
@@ -441,7 +490,7 @@ exports = module.exports = __webpack_require__(7)(undefined);
 
 
 // module
-exports.push([module.i, "body {\n  margin: 0;\n  font-size: 13px;\n  line-height: 18px;\n  font-family: \"Helvetica Neue\",Arial,sans-serif;\n  color: #222;\n}\n\n.showcase {\n  margin: 10px;\n\n}\n.showcase__wrapper {\n  position: relative;\n}\n\n.showcase__viewport {\n  z-index: 1;\n  border: 1px solid #ccc;\n}\n\n.showcase__viewport {\n  overflow: hidden;\n  position: relative;\n  text-align: center;\n  height: 500px;\n}\n\n.showcase__item {\n  height: 500px;\n  line-height: 500px;\n  margin: 0 auto;\n  position: relative;\n  overflow: hidden;\n}\n\n.showcase__viewport {\n  overflow: hidden;\n  position: relative;\n  text-align: center;\n  height: 500px;\n}\n\n.showcase {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -khtml-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  width: 560px;\n  margin: 0 auto;\n}\n\n.showcase__item-image {\n  height: 100%;\n  margin: 0 auto;\n}\n\nimg {\n  border: 0;\n}\n\n.showcase__panner {\n  z-index: 3;\n}\n\n.showcase__panner {\n  opacity: 0;\n}\n\n.showcase__panner {\n  position: absolute;\n  overflow: hidden;\n  background: #fff;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.showcase__panner img {\n  display: inline;\n  position: absolute;\n  left: 0;\n  top: 0;\n  /*width: 1200px;*/\n}\n\n.showcase__item {\n  height: 500px;\n  line-height: 500px;\n  margin: 0 auto;\n  position: relative;\n  overflow: hidden;\n}\n\n.showcase__slider {\n  position: relative;\n}\n\n.showcase__slider-wrapper {\n  border-top: 1px solid #eee;\n  overflow: hidden;\n  height: 80px;\n}\n\n.showcase__slider-viewport {\n  position: relative;\n}\n\n.showcase__slide {\n  border-top: 3px solid transparent;\n  cursor: pointer;\n  float: left;\n  height: 66px;\n  line-height: 66px;\n  margin: 0 10px 0 0;\n  padding-top: 5px;\n  position: relative;\n  width: 46px;\n  text-align: center;\n}\n", ""]);
+exports.push([module.i, "body {\n  margin: 0;\n  font-size: 13px;\n  line-height: 18px;\n  font-family: \"Helvetica Neue\",Arial,sans-serif;\n  color: #222;\n}\n.showcase__wrapper {\n  position: relative;\n}\n\n.showcase__viewport {\n  z-index: 1;\n  border: 1px solid #ccc;\n}\n\n.showcase__viewport {\n  overflow: hidden;\n  position: relative;\n  text-align: center;\n  height: 500px;\n}\n\n.showcase__item {\n  height: 500px;\n  line-height: 500px;\n  margin: 0 auto;\n  position: relative;\n  overflow: hidden;\n}\n\n.showcase__viewport {\n  overflow: hidden;\n  position: relative;\n  text-align: center;\n  height: 500px;\n}\n\n.showcase {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -khtml-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  width: 560px;\n  margin: 10px auto;\n}\n\n.showcase__item-image {\n  height: 100%;\n  margin: 0 auto;\n}\n\nimg {\n  border: 0;\n}\n\n.showcase__panner {\n  z-index: 3;\n}\n\n.showcase__panner {\n  opacity: 0;\n}\n\n.showcase__panner {\n  position: absolute;\n  overflow: hidden;\n  background: #fff;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n}\n\n.showcase__panner img {\n  display: inline;\n  position: absolute;\n  left: 0;\n  top: 0;\n  /*width: 1200px;*/\n}\n\n.showcase__item {\n  height: 500px;\n  line-height: 500px;\n  margin: 0 auto;\n  position: relative;\n  overflow: hidden;\n}\n\n.showcase__slider {\n  position: relative;\n}\n\n.showcase__slider-wrapper {\n  border-top: 1px solid #eee;\n  overflow: hidden;\n  height: 80px;\n}\n\n.showcase__slider-viewport {\n  position: relative;\n}\n\n.showcase__slide {\n\n  cursor: pointer;\n  float: left;\n  height: 66px;\n  line-height: 66px;\n  margin: 0 10px 0 0;\n  padding-top: 5px;\n  position: relative;\n  width: 46px;\n  text-align: center;\n}\n\n.showcase__slide-image{\n  border-top: 3px solid transparent;\n}\n\n.showcase__slide_active {\n  border-top-color: #000;\n}\n", ""]);
 
 // exports
 
